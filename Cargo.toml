@@ -1,0 +1,22 @@
+[package]
+name = "rontap"
+version = "0.1.0"
+edition = "2021"
+authors = [
+    "Thorsten Mürell <thorsten.muerell@compax.at>",
+    "Zoran Zaric <zoran.zaric@compax.at>",
+]
+
+[dependencies]
+chrono = { version = "0.4.23", features = ["serde"] }
+color-eyre = "0.6.2"
+reqwest = { version = "0.11.13", features = ["json"] }
+serde = { version = "1.0.152", features = ["derive"] }
+thiserror = "1.0.38"
+tracing = { version = "0.1", features = ["attributes"] }
+itertools = "0.10"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["full"] }
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+serde_json = "1"
