@@ -8,6 +8,7 @@ pub mod ip_interface;
 pub mod job;
 pub mod nfs;
 pub mod node;
+pub mod port;
 pub mod shelf;
 pub mod snapmirror;
 pub mod snapshot;
@@ -150,7 +151,7 @@ pub struct Statistics {
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Cluster {
-    pub version: Version
+    pub version: Version,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -160,7 +161,6 @@ pub struct Version {
     pub major: u32,
     pub minor: u32,
 }
-
 
 #[cfg(test)]
 mod test {

@@ -15,12 +15,14 @@ pub struct Volume {
     pub size: u128,
     pub svm: GenericThing,
     pub aggregates: Vec<GenericThing>,
+    pub encryption: VolumeEncryption,
     pub space: VolumeSpace,
     pub statistics: Option<Statistics>,
     pub clone: VolumeClone,
     pub autosize: VolumeAutosize,
     pub files: VolumeFiles,
     pub movement: Option<VolumeMovement>,
+    pub efficiency: Option<VolumeEfficiency>,
 }
 
 impl Volume {
@@ -47,6 +49,22 @@ pub struct VolumeSpace {
     pub size: u128,
     pub snapshot: VolumeSpaceSnapshot,
     pub used: u128,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct VolumeEfficiency {
+    pub compaction: VolumeEfficencyCompaction,
+    pub compression: VolumeEfficencyCompression,
+    pub cross_volume_dedupe: VolumeEfficencyDedupe,
+    pub dedupe: VolumeEfficencyDedupe,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct VolumeEncryption {
+    pub enabled: bool,
+    pub state: Option<VolumeEncrpytionState>,
+    #[serde(rename = "type")]
+    pub typ: Option<VolumeEncrpytionType>,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -93,6 +111,42 @@ pub struct VolumeMovement {
     pub cutover_window: u32,
     pub destination_aggregate: GenericThing,
     pub percent_complete: Option<u32>,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "snake_case")]
+pub enum VolumeEncrpytionState {
+    Encrypted,
+    Encrypting,
+    Partial,
+    Rekeying,
+    Unencrypted,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "snake_case")]
+pub enum VolumeEfficencyCompaction {
+    Inline, None, Mixed,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "snake_case")]
+pub enum VolumeEfficencyCompression {
+    Inline, Background, Both, None, Mixed
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "snake_case")]
+pub enum VolumeEfficencyDedupe {
+    Inline, Background, Both, None, Mixed
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "snake_case")]
+pub enum VolumeEncrpytionType {
+    None,
+    Volume,
+    Aggregate,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq, PartialOrd, Ord)]

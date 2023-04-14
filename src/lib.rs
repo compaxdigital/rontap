@@ -11,6 +11,7 @@ use models::{
     job::JobRecords,
     nfs::NfsClientRecords,
     node::NodeRecords,
+    port::PortRecords,
     shelf::ShelfRecords,
     snapmirror::SnapmirrorRelationshipRecords,
     snapshot::SnapshotRecords,
@@ -59,7 +60,15 @@ impl TryFrom<Version> for ApiVersion {
 impl ApiVersion {
     pub fn volume_fields(&self) -> &str {
         match self {
-            _ => "size,svm,aggregates,space,clone,autosize,files,movement",
+            _ => "size,svm,aggregates,space,clone,autosize,files,movement,encryption,efficiency",
+        }
+    }
+
+    fn ethernet_port_fields(&self) -> &str {
+        match self {
+            _ => {
+                "broadcast_domain,enabled,lag,mac_address,mtu,name,speed,state,type,uuid,vlan,node"
+            }
         }
     }
 }
@@ -135,6 +144,22 @@ impl OntapClient {
                 "fields",
                 "enabled,ip,ipspace,location,name,scope,service_policy,services,state,svm,uuid,vip",
             )])
+            .send()
+            .await?;
+        if !res.status().is_success() {
+            return Err(OntapApiError::HttpStatusCode(res.status().as_u16()));
+        }
+        Ok(res.json().await?)
+    }
+
+    pub async fn get_ethernet_ports(&self) -> Result<PortRecords, OntapApiError> {
+        let url = format!("{}/network/ethernet/ports", self.url);
+        let res = self
+            .client
+            .get(url)
+            .basic_auth(&self.username, Some(&self.password))
+            .header("accept", "application/json")
+            .query(&[("fields", self.api_version.ethernet_port_fields())])
             .send()
             .await?;
         if !res.status().is_success() {
