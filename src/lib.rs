@@ -20,7 +20,7 @@ use models::{
         Volume, VolumeMetricRecords, VolumeMoveAggregate, VolumeMoveBody, VolumeMoveMovement,
         VolumeRecords, VolumeResizeBody,
     },
-    AggregatedMetrics, Cluster, Duration, Metrics, MetricsRecord, OntapApiError, Status, Version,
+    AggregatedMetrics, Cluster, Duration, Metrics, MetricsRecord, OntapApiError, Status, Version, s3::S3BucketRecords,
 };
 use tracing::instrument;
 
@@ -71,6 +71,13 @@ impl ApiVersion {
             }
         }
     }
+
+    pub fn bucket_fields(&self) -> &str {
+        match self {
+            _ => "svm,size,volume,encryption,size",
+        }
+    }
+
 }
 
 pub struct OntapConnectionParams {
@@ -229,6 +236,22 @@ impl OntapClient {
         Ok(res.json().await?)
     }
 
+    pub async fn get_s3_buckets(&self) -> Result<S3BucketRecords, OntapApiError> {
+        let url = format!("{}/protocols/s3/buckets", self.url);
+        let res = self
+            .client
+            .get(url)
+            .basic_auth(&self.username, Some(&self.password))
+            .header("accept", "application/json")
+            .query(&[("fields", self.api_version.bucket_fields())])
+            .send()
+            .await?;
+        if !res.status().is_success() {
+            return Err(OntapApiError::HttpStatusCode(res.status().as_u16()));
+        }
+        Ok(res.json().await?)
+    }
+
     pub async fn get_disks(&self) -> Result<DiskRecords, OntapApiError> {
         let url = format!("{}/storage/disks", self.url);
         let res = self
@@ -302,7 +325,7 @@ impl OntapClient {
             .get(url)
             .basic_auth(&self.username, Some(&self.password))
             .header("accept", "application/json")
-            .query(&[("fields", "size,svm,aggregates,space")])
+            .query(&[("fields", self.api_version.volume_fields())])
             .send()
             .await?;
         if !res.status().is_success() {

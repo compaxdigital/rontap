@@ -13,6 +13,7 @@ pub struct Volume {
     pub uuid: String,
     pub name: String,
     pub size: u128,
+    pub style: Option<VolumeStyle>,
     pub svm: GenericThing,
     pub aggregates: Vec<GenericThing>,
     pub encryption: VolumeEncryption,
@@ -23,6 +24,7 @@ pub struct Volume {
     pub files: VolumeFiles,
     pub movement: Option<VolumeMovement>,
     pub efficiency: Option<VolumeEfficiency>,
+    pub constituents: Option<Vec<VolumeConstituents>>,
 }
 
 impl Volume {
@@ -49,6 +51,14 @@ pub struct VolumeSpace {
     pub size: u128,
     pub snapshot: VolumeSpaceSnapshot,
     pub used: u128,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct VolumeConstituents {
+    pub aggregates: Option<GenericThing>,
+    pub movement: Option<VolumeMovement>,
+    pub name : String,
+    pub space : Option<VolumeSpace>,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -121,6 +131,14 @@ pub enum VolumeEncrpytionState {
     Partial,
     Rekeying,
     Unencrypted,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "snake_case")]
+pub enum VolumeStyle {
+    Flexvol,
+    Flexgroup,
+    FlexgroupConstituent,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq, PartialOrd, Ord)]

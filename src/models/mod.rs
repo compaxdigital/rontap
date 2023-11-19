@@ -14,6 +14,7 @@ pub mod snapmirror;
 pub mod snapshot;
 pub mod svm;
 pub mod volume;
+pub mod s3;
 
 #[derive(Error, Debug)]
 pub enum OntapApiError {
