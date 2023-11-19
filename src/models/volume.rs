@@ -44,7 +44,7 @@ pub struct VolumeSpace {
     pub capacity_tier_footprint: Option<u128>,
     pub footprint: Option<u128>,
     //pub logical_space	{...}
-    pub metadata: u128,
+    pub metadata: Option<u128>,
     pub over_provisioned: u128,
     pub size: u128,
     pub snapshot: VolumeSpaceSnapshot,

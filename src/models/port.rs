@@ -17,7 +17,7 @@ pub struct Port {
     pub mtu: u32,
     pub name: String,
     pub node: GenericThing,
-    pub speed: Option<String>,
+    pub speed: Option<u32>,
     pub state: PortState,
     #[serde(rename = "type")]
     pub typ: PortType,

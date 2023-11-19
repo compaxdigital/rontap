@@ -69,6 +69,16 @@ pub enum Service {
     DataIscsi,
     DataS3Server,
     DataFpolicyClient,
+    ManagementDnsClient,
+    ManagementAdClient,
+    ManagementLdapClient,
+    ManagementNisClient,
+    ManagementNtpClient,
+    DataDnsServer,
+    ManagementHttp,
+    BackupNdmpControl,
+    ManagementSnmpServer,
+    ManagementNtpServer,
 }
 
 #[derive(Debug, Deserialize, Serialize, PartialEq, Eq, PartialOrd, Ord, Clone)]
